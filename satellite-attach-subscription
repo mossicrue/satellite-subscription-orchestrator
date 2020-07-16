@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+require 'apipie-bindings'
+require 'rest-client'
+require 'optparse'
+require 'thread'
+require 'json'
+require 'yaml'
+require 'csv'
+
+require_relative 'lib/sas'
+require_relative 'lib/api_handler'
+require_relative 'lib/option_parser'
+
+# force the output to be sent to stdout in a sync way
+$stdout.sync = true
