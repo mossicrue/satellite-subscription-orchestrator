@@ -22,7 +22,7 @@ module SASOptionParser
         opts.on("-p", "--pass=PASS", "Password to log in to Satellite") do |password|
           @options[:pass] = password
         end
-        opts.on("-o", "--organization-id=ID", "ID of the Organization to manage subscriptions") do |organization|
+        opts.on("-o", "--organization-id=ID", "Organization ID to manage subscriptions") do |organization|
           @options[:org] = organization
         end
         opts.on("--no-verify-ssl", "don't verify SSL certs") do
@@ -33,10 +33,10 @@ module SASOptionParser
           @options[:config_file] = conf
         end
         # extra behaviour options
-        opts.on("--multiple-search", "Allow to search content-hosts with the order of query result in yaml configuration file") do
+        opts.on("--multiple-search", "Allow to search content-hosts with the order of query result in configuration file") do
           @options[:multi_search] = true
         end
-        opts.on("--clean-same-product", "Ensure that all the content hosts has 1 subscriptions for every product found from yaml configuration file") do
+        opts.on("--clean-same-product", "Ensure that all the content hosts has the right number of subscriptions for every product to be attached") do
           @options[:clean_sub] = true
         end
         opts.on("--host-auto-heal=VALUE", "Disable or enable auto-attach process on Satellite content hosts (Accepted value: 'noop' 'Enable' or 'Disable')") do |setting|
@@ -54,61 +54,66 @@ module SASOptionParser
         ###   @options[:virtwhocachefile] = vwf
         ### end
         # complex data center options
-        opts.on("--empty-hypervisor", "Remove all the subscriptions from hypervisors without guests. Not compatible with --density and --density-* options.") do
+        opts.on("--empty-hypervisor", "Remove all the subscriptions from hypervisors without guests. Not compatible with --density* options.") do
           @options[:empty_hypervisor] = true
         end
-        opts.on("--density", "check if all hosts in a cluster has an average number of guests >= 5 for assigning VDC Subscription. Not compatible with --empty-hypervisor option.") do
+        opts.on("--density", "Check if all virt-who reported clusters have an average number of vm >= 4. Not compatible with --empty-hypervisor option.") do
           @options[:density] = true
         end
-        opts.on("--density-value=VALUE", "check if all hosts in a cluster has an average number of guests >= VALUE for assigning VDC Subscription. Not compatible with --empty-hypervisor option.") do |value|
+        opts.on("--density-value=VALUE", "Change the average number of vm to check on all virt-who reported clusters. Not compatible with --empty-hypervisor option.") do |value|
           @options[:density_value] = value
         end
         ### Still to be implement in the other setting, can increase entrophy of control for guests
-        opts.on("--force-density", "Force to use datacenter subscriptions for vm guests of subscribed hypervisor. To use in case of report with insufficient subscriptions pool. Not compatible with --empty-hypervisor") do
+        opts.on("--density-force-vdc", "Force to use datacenter subscriptions for vm guests if hypervisor isn't subscribed. This options is intended for reports in case of insufficient subscriptions pool. Not compatible with --empty-hypervisor") do
           @options[:force_density] = true
         end
         # report options
-        opts.on("--density-file=FILE", "Write report of cluster state to custom file. Not compatible with --empty-hypervisor option.") do |df|
+        opts.on("--density-file=FILE", "Custom file in which create the cluster state report. Not compatible with --empty-hypervisor option.") do |df|
           @options[:density_file] = df
         end
-        opts.on("--print-subscription-report", "Print a report for the subscription used by of all hosts") do
+        opts.on("--print-subscription-report", "Create a CSV report with the subscription status of the Environment") do
           @options[:sub_report] = true
         end
-        opts.on("--print-subscription-report-file=FILE", "Print a report for the subscription in a custom file used by of all hosts") do |srf|
+        opts.on("--print-subscription-report-file=FILE", "Custom CSV file in which print the subscription status") do |srf|
           @options[:sub_report_file] = srf
         end
         # API Options
-        opts.on("--repeat-api", "Allow to repeat API for a certain number before fail") do
+        opts.on("--repeat-api", "Repeat an API call for a certain number of time in case of error") do
           @options[:api_repeat] = true
         end
-        opts.on("--repeat-api-step=MAX_STEP", "Set the number of maximum tentative which API try to repeat API Call in case of fails") do |step|
+        opts.on("--repeat-api-step=MAX_STEP", "Maximum number of time to retry the failing API Call") do |step|
           @options[:api_max_step] = step
         end
-        opts.on("--repeat-api-sleep", "Allow to add an incremental waiting time configurable via configuration file") do
+        opts.on("--repeat-api-sleep", "Add an incremental waiting time between a failing tentative of API Call and the next one") do
           @options[:api_sleep] = true
         end
-        opts.on("--repeat-api-sleep-time=TIME_IN_SECONDS") do |wait|
+        opts.on("--repeat-api-sleep-time=TIME_IN_SECONDS", "Set the waiting time between a failing tentative of API Call and the next one") do |wait|
           @options[:api_sleep_time] = wait
         end
-        opts.on("--repeat-api-sleep-multiplier=MULTIPLIER") do |mult|
+        opts.on("--repeat-api-sleep-multiplier=MULTIPLIER", "Set the incremental factor between a failing tentative of API Call and the next one") do |mult|
           @options[:api_sleep_mult] = wait
         end
         # Concurrency options
-        opts.on("--concurrency", "Allow to assign subscription to hosts in parallel, as setted in configuration file") do
+        opts.on("--concurrency", "Enable subscription assignament to hosts to run with parallel threads setted in configuration file") do
           @options[:concurrency] = true
         end
-        opts.on("--concurrency-thread=MAX_THREAD", "Number of max concurrent thread to be run in parrallel") do |thread|
+        opts.on("--concurrency-thread=MAX_THREAD", "Number of max concurrent threads to be run in parrallel") do |thread|
           @options[:concurrency_max_thread] = thread
         end
+        # source options
+        opts.on("--read-from-cache", "Read data from cache file, if possible") do
+          @options[:use_cache] = true
+        end
+        opts.on("--cache-file=FILE", "Cache file to be read and write")
         # Verbosity options
-        opts.on("-v", "--verbose", "verbose output for the script") do
+        opts.on("-v", "--verbose", "Set the output of the script to verbose level") do
           @options[:verbose] = true
         end
-        opts.on("-d", "--debug", "debug output for the script") do
+        opts.on("-d", "--debug", "Set the output of the script to debug level") do
           @options[:verbose] = true
           @options[:debug] = true
         end
-        opts.on("-n", "--noop", "do not actually execute anything") do
+        opts.on("-n", "--noop", "Do not actually attach or remove any subscriptions") do
           @options[:noop] = true
         end
       end
