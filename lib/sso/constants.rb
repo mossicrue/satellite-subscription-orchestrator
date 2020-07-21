@@ -9,8 +9,10 @@ module SSO
 
     # exit code of moxible
     EXIT_ZERO = 0
+    EXIT_GENERIC_ERROR = 1
     EXIT_INVALID_PARSE = 10
     EXIT_INVALID_SUBCOMMAND = 11
+    EXIT_FILE_NOT_FOUND = 20
 
   end
 end
