@@ -1,4 +1,4 @@
-module SASOptionParser
+module SSOOptionParser
   class Parser
     def self.parse(optionParser, passedArguments)
       command = ""
@@ -6,9 +6,9 @@ module SASOptionParser
       self.checkArguments optionParser, passedArguments
       while passedArguments.size > 0
         command = self.buildCommand command, passedArguments.shift
-        subOptionParser = SASOptionParser::Builder::initializeParser command
+        subOptionParser = SSOOptionParser::Builder::initializeParser command
         self.parseOptions subOptionParser
-        options = SASOptionParser::Binding::getParsedOptions
+        options = SSOOptionParser::Binding::getParsedOptions
       end
       # I need to think if this functions can be usefull here or moved in every dispatched functions,
       # for now I think that the function will be commented also for a easy developing
@@ -33,12 +33,12 @@ module SASOptionParser
       begin
         optionParser.order!
       rescue OptionParser::ParseError => exception
-        SAS::Utils::exitWithError "#{exception}\n\n See #{SASSettings::Constants::PROGRAM_NAME} --help", SAS::Constants::INVALID_PARSE
+        SSO::Utils::exitWithError "#{exception}\n\n See #{SSOSettings::Constants::PROGRAM_NAME} --help", SSO::Constants::INVALID_PARSE
       end
     end
 
     def self.printHelp(optionParser)
-      SAS::Utils::exitWith optionParser.help
+      SSO::Utils::exitWith optionParser.help
     end
   end
 end

@@ -1,4 +1,4 @@
-module SAS
+module SSO
   class Constants
     # general purpose constants of the moxible tools
     PROGRAM_NAME = "Satellite Attach Subscription".freeze

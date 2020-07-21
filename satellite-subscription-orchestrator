@@ -8,7 +8,7 @@ require 'json'
 require 'yaml'
 require 'csv'
 
-require_relative 'lib/sas'
+require_relative 'lib/sso'
 require_relative 'lib/api_handler'
 require_relative 'lib/option_parser'
 

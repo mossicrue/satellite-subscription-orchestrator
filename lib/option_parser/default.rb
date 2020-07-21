@@ -1,4 +1,4 @@
-module SASOptionParser
+module SSOOptionParser
   class Defaults
     @@defaults_options = {
       :url                       => 'https://localhost/',
@@ -10,9 +10,9 @@ module SASOptionParser
       :config_file               => 'config.yaml',
       # :virtwho                   => false,
       # :virtwhocachefile          => 'virt-who.cache',
-      :auto_heal                 => "noop",
       :multi_search              => false,
       :clean_same_sub            => false,
+      :auto_heal                 => 'noop',
       :empty_hypervisor          => false,
       :density                   => false,
       :density_value             => 4,
@@ -21,9 +21,9 @@ module SASOptionParser
       :force_density             => false,
       :density_file              => 'cluster-state.csv',
       :guest_report_file         => 'guest-report.csv',
-      :report                    => false,
-      :report_file               => 'sub-report.csv',
-      :report_detail_file        => 'detailed-report.csv',
+      :sub_report                    => false,
+      :sub_report_file               => 'sub-report.csv',
+      :sub_report_detail_file        => 'detailed-report.csv',
       :api_repeat                => false,
       :api_max_step              => 1,
       :api_sleep                 => false,
@@ -31,6 +31,8 @@ module SASOptionParser
       :api_sleep_mult            => 1,
       :concurrency               => false,
       :concurrency_max_thread    => 2,
+      :use_cache                 => false,
+      :cache_file                => 'sas.cache',
       :verbose                   => false,
       :debug                     => false,
       :noop                      => false

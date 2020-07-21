@@ -1,2 +1,2 @@
-# satellite-attach-subscription
+# satellite-subscription-orchestrator
 A beautyful tool for managing satellite subscriptions

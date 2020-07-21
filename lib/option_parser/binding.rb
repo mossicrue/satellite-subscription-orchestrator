@@ -1,14 +1,14 @@
-module SASOptionParser
+module SSOOptionParser
   class Binding
 
     @@parsedOptions = {}
 
     ## MARK: Subcommand Options Tree
     SUBCOMMAND_TREE = {
-      # global settings, I mean, first help when you type ./SAS --help
-      SAS::Constants::CMD_GLOBAL => OptionParser.new do |opts|
+      # global settings, I mean, first help when you type ./SSO --help
+      SSO::Constants::CMD_GLOBAL => OptionParser.new do |opts|
         opts.banner = "Usage: #{opts.program_name} [options]"
-        opts.version = SAS::Constants::PROGRAM_VERSION
+        opts.version = SSO::Constants::PROGRAM_VERSION
         # connection options
         opts.on("-U", "--url=URL", "URL to the Satellite") do |url|
           @options[:url] = url
@@ -22,7 +22,7 @@ module SASOptionParser
         opts.on("-p", "--pass=PASS", "Password to log in to Satellite") do |password|
           @options[:pass] = password
         end
-        opts.on("-o", "--organization-id=ID", "Organization ID to manage subscriptions") do |organization|
+        opts.on("-o", "--organization-id=ID", OptionParser::DecimalInteger, "Organization ID to manage subscriptions") do |organization|
           @options[:org] = organization
         end
         opts.on("--no-verify-ssl", "don't verify SSL certs") do
@@ -37,7 +37,7 @@ module SASOptionParser
           @options[:multi_search] = true
         end
         opts.on("--clean-same-product", "Ensure that all the content hosts has the right number of subscriptions for every product to be attached") do
-          @options[:clean_sub] = true
+          @options[:clean_same_sub] = true
         end
         opts.on("--host-auto-heal=VALUE", "Disable or enable auto-attach process on Satellite content hosts (Accepted value: 'noop' 'Enable' or 'Disable')") do |setting|
           if setting.downcase == "enable" or setting.downcase == "disable"
@@ -60,7 +60,7 @@ module SASOptionParser
         opts.on("--density", "Check if all virt-who reported clusters have an average number of vm >= 4. Not compatible with --empty-hypervisor option.") do
           @options[:density] = true
         end
-        opts.on("--density-value=VALUE", "Change the average number of vm to check on all virt-who reported clusters. Not compatible with --empty-hypervisor option.") do |value|
+        opts.on("--density-value=VALUE", OptionParser::DecimalInteger, "Change the average number of vm to check on all virt-who reported clusters. Not compatible with --empty-hypervisor option.") do |value|
           @options[:density_value] = value
         end
         ### Still to be implement in the other setting, can increase entrophy of control for guests
@@ -74,37 +74,39 @@ module SASOptionParser
         opts.on("--print-subscription-report", "Create a CSV report with the subscription status of the Environment") do
           @options[:sub_report] = true
         end
-        opts.on("--print-subscription-report-file=FILE", "Custom CSV file in which print the subscription status") do |srf|
-          @options[:sub_report_file] = srf
+        opts.on("--print-subscription-report-file=FILE", "Custom CSV file in which print the subscription status") do |file|
+          @options[:sub_report_file] = file
         end
         # API Options
         opts.on("--repeat-api", "Repeat an API call for a certain number of time in case of error") do
           @options[:api_repeat] = true
         end
-        opts.on("--repeat-api-step=MAX_STEP", "Maximum number of time to retry the failing API Call") do |step|
+        opts.on("--repeat-api-step=MAX_STEP", OptionParser::DecimalInteger, "Maximum number of time to retry the failing API Call") do |step|
           @options[:api_max_step] = step
         end
         opts.on("--repeat-api-sleep", "Add an incremental waiting time between a failing tentative of API Call and the next one") do
           @options[:api_sleep] = true
         end
-        opts.on("--repeat-api-sleep-time=TIME_IN_SECONDS", "Set the waiting time between a failing tentative of API Call and the next one") do |wait|
+        opts.on("--repeat-api-sleep-time=TIME_IN_SECONDS", OptionParser::DecimalInteger, "Set the waiting time between a failing tentative of API Call and the next one") do |wait|
           @options[:api_sleep_time] = wait
         end
-        opts.on("--repeat-api-sleep-multiplier=MULTIPLIER", "Set the incremental factor between a failing tentative of API Call and the next one") do |mult|
+        opts.on("--repeat-api-sleep-multiplier=MULTIPLIER", OptionParser::DecimalInteger, "Set the incremental factor between a failing tentative of API Call and the next one") do |mult|
           @options[:api_sleep_mult] = wait
         end
         # Concurrency options
         opts.on("--concurrency", "Enable subscription assignament to hosts to run with parallel threads setted in configuration file") do
           @options[:concurrency] = true
         end
-        opts.on("--concurrency-thread=MAX_THREAD", "Number of max concurrent threads to be run in parrallel") do |thread|
+        opts.on("--concurrency-thread=MAX_THREAD", OptionParser::DecimalInteger, "Number of max concurrent threads to be run in parrallel") do |thread|
           @options[:concurrency_max_thread] = thread
         end
         # source options
         opts.on("--read-from-cache", "Read data from cache file, if possible") do
           @options[:use_cache] = true
         end
-        opts.on("--cache-file=FILE", "Cache file to be read and write")
+        opts.on("--cache-file=FILE", "Cache file to be read and write") do |file|
+          @options[:cache_file] = file
+        end
         # Verbosity options
         opts.on("-v", "--verbose", "Set the output of the script to verbose level") do
           @options[:verbose] = true
@@ -121,7 +123,7 @@ module SASOptionParser
 
     def self.getOptionParser(command)
       if not SUBCOMMAND_TREE.has_key? command
-        SAS::Utils::exitWithError "SUBCOMMAND #{command} not expected. Exiting", SAS::Constants::EXIT_INVALID_SUBCOMMAND
+        SSO::Utils::exitWithError "SUBCOMMAND #{command} not expected. Exiting", SSO::Constants::EXIT_INVALID_SUBCOMMAND
       end
       return SUBCOMMAND_TREE[command]
     end

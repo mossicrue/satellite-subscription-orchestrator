@@ -1,11 +1,11 @@
-module SASOptionParser
+module SSOOptionParser
   class Builder
     def self.initializeGlobalParser()
-      return self.initializeParser SAS::Constants::CMD_GLOBAL
+      return self.initializeParser SSO::Constants::CMD_GLOBAL
     end
 
     def self.initializeParser(command)
-      return SASOptionParser::Binding::getOptionParser command
+      return SSOOptionParser::Binding::getOptionParser command
     end
   end
 end
