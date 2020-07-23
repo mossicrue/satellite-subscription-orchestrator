@@ -44,13 +44,7 @@ module SSOOptionParser
     end
 
     def self.mergeDefaults(parsed_options)
-      # add to parsed options the missing ones in defaults class
-      @default_options.each do |key, val|
-        if not parsed_options.has_key? key
-          parsed_options[key] = val
-        end
-      end
-      return parsed_options
+      return self.mergeOptions parsed_options, @default_options
     end
 
     def self.loadFromConfiguration(parsed_options)
@@ -59,7 +53,20 @@ module SSOOptionParser
       rescue Errno::ENOENT
         SSO::Utils::exitWithError "FATAL ERROR: Configuration file #{parsed_options[:config_file]} not found! Exiting", SSO::Constants::EXIT_FILE_NOT_FOUND
       end
-      # TODO: load the keys and merge with it, create a second function using defaults and loaded hash from yaml and rename mergeDefaults with more generic mergeOptions(options1, options 2)
+      if configuration_file.has_key? :settings
+        parsed_options = self.mergeOptions parsed_options
+      end
+      return parsed_options
+    end
+
+    # TODO: Make test with both instance @ and class @@ version of parsed_options and default_options, implement dup in case of problem
+    def self.mergeOptions(first_options, second_options)
+      second_options.each do |key, val|
+        if not first_options.has_key? key
+          first_options[kay] = val
+        end
+      end
+      return first_options
     end
   end
 end

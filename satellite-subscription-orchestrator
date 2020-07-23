@@ -7,6 +7,7 @@ require 'thread'
 require 'json'
 require 'yaml'
 require 'csv'
+require 'pp'
 
 require_relative 'lib/sso'
 require_relative 'lib/api_handler'
@@ -14,3 +15,9 @@ require_relative 'lib/option_parser'
 
 # force the output to be sent to stdout in a sync way
 $stdout.sync = true
+
+globalParser = SSOOptionParser::Builder::initializeGlobalParser
+globalParser.order!
+command, options = SSOOptionParser::Parser::parse globalParser, ARGV
+puts "\n\nJust before start this are the Options:"
+pp options

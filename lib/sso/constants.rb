@@ -7,6 +7,11 @@ module SSO
     # option-parser commands for satellite attach subscription tools
     CMD_GLOBAL = "global"
 
+    # options symbols
+    # OPTIONS_CONFIGURATION_FILE = :config_file
+
+    # configuration symbols
+
     # exit code of moxible
     EXIT_ZERO = 0
     EXIT_GENERIC_ERROR = 1
