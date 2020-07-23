@@ -7,7 +7,7 @@ module SSO
 
     def self.exitWith(string)
       puts string
-      exit Moxible::Constants::EXIT_ZERO
+      exit SSO::Constants::EXIT_ZERO
     end
 
     def self.exitWithPending(string)
@@ -18,8 +18,28 @@ module SSO
       STDERR.puts "FATAL ERROR: #{string}"
     end
 
+    def self.putsVerbose(string)
+      if self.verbose?
+        puts "VERBOSE: #{string}"
+      end
+    end
+
+    def self.putsDebug(string)
+      if self.debug?
+        puts "  DEBUG: #{string}"
+      end
+    end
+
+    def self.verbose?
+      return $options[:verbose]
+    end
+
+    def self.debug?
+      return $options[:debug]
+    end
+
     def self.showVersion
-      self.exitWith "#{Moxible::Constants::PROGRAM_NAME} #{Moxible::Constants::PROGRAM_VERSION}"
+      self.exitWith "#{SSO::Constants::PROGRAM_NAME} #{SSO::Constants::PROGRAM_VERSION}"
     end
   end
 end

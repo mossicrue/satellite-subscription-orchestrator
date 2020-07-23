@@ -1,6 +1,6 @@
 module SSOOptionParser
   class Defaults
-    @default_options = {
+    @@default_options = {
       :url                       => 'https://localhost/',
       :timeout                   => 300,
       :user                      => 'admin',
@@ -44,7 +44,7 @@ module SSOOptionParser
     end
 
     def self.mergeDefaults(parsed_options)
-      return self.mergeOptions parsed_options, @default_options
+      return self.mergeOptions parsed_options, @@default_options
     end
 
     def self.loadFromConfiguration(parsed_options)

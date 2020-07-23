@@ -1,2 +1,2 @@
-include_relative 'sso/constants.rb'
-include_relative 'sso/utils.rb'
+require_relative 'sso/constants.rb'
+require_relative 'sso/utils.rb'

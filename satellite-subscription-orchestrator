@@ -15,9 +15,9 @@ require_relative 'lib/option_parser'
 
 # force the output to be sent to stdout in a sync way
 $stdout.sync = true
-
+$options = {}
 globalParser = SSOOptionParser::Builder::initializeGlobalParser
 globalParser.order!
-command, options = SSOOptionParser::Parser::parse globalParser, ARGV
+command = SSOOptionParser::Parser::parse globalParser, ARGV
 puts "\n\nJust before start this are the Options:"
-pp options
+pp $options

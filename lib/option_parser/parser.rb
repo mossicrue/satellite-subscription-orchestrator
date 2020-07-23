@@ -2,18 +2,15 @@ module SSOOptionParser
   class Parser
     def self.parse(optionParser, passedArguments)
       command = ""
-      options = {}
+      $options = {}
       self.checkArguments optionParser, passedArguments
       while passedArguments.size > 0
         command = self.buildCommand command, passedArguments.shift
         subOptionParser = SSOOptionParser::Builder::initializeParser command
         self.parseOptions subOptionParser
-        options = SSOOptionParser::Binding::getParsedOptions
+        $options = SSOOptionParser::Binding::getParsedOptions
       end
-      # I need to think if this functions can be usefull here or moved in every dispatched functions,
-      # for now I think that the function will be commented also for a easy developing
-      # self.checkParsedOptions options, subOptionParser
-      return command, options
+      return command
     end
 
     def self.checkArguments(optionParser, passedArguments)

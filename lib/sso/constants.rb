@@ -1,7 +1,7 @@
 module SSO
   class Constants
-    # general purpose constants of the moxible tools
-    PROGRAM_NAME = "Satellite Attach Subscription".freeze
+    # general purpose constants of the SSO tools
+    PROGRAM_NAME = "Satellite Subscription Orchestrator".freeze
     PROGRAM_VERSION = "0.0.1 pre-alpha"
 
     # option-parser commands for satellite attach subscription tools
@@ -12,7 +12,7 @@ module SSO
 
     # configuration symbols
 
-    # exit code of moxible
+    # exit code of SSO
     EXIT_ZERO = 0
     EXIT_GENERIC_ERROR = 1
     EXIT_INVALID_PARSE = 10
