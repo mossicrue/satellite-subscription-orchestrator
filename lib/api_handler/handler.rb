@@ -1,18 +1,20 @@
 module SSOAPI
   class Handler
+    @@api_bind = nil
 
-    
-
-    def self.apiCall(resource, action, params, exiting = false)
-      puts "Calling APIPIE resource: #{resource}, action: #{action} with params #{params}"
+    def self.bindAPI
+      @@api_bind = ApipieBindings::API.new({:uri => $options[:url], :username => $options[:user], :password => $options[:pass], :api_version => '2', :timeout => $options[:timeout]}, {:verify_ssl => $options[:verify_ssl]})
     end
 
-    def self.makeRequest(restURL, options)
-      return "Calling #{restURL} with options #{options}"
+    def self.apiCall(resource, action, params, exiting = false)
+      # params.merge!({:organization_id => @options[:org], :page => page, :per_page => 100})
+      params.merge! {:organization_id => $options[SSO::Constants::SATELLITE_ORGANIZATION]}
+      puts "Calling APIPIE resource: #{resource}, action: #{action} with params #{params}"
+      return 0
       attempt = 0
-      while attempt <= HPSMTool::Settings::API_MAX_ATTEMPTS
+      while attempt <= $options[SSO::Constants::API_MAX_STEP]
         begin
-          response = RestClient::Request::execute method: get, url: restURL, header: options, user: HPSMTool::Settings::API_USERNAME, pass: HPSMTool::Settings::API_PASSWORD
+          response = @@api_bind.resource(resource).call(action, params)
         rescue RestClient::ExceptionWithResponse => exception
           self.handleError attempt, exception
           attempt += 1
@@ -21,40 +23,38 @@ module SSOAPI
       return response
     end
 
-    def self.fetchAllResults(resource)
+    def self.fetchAllResults(resource, action, params)
       restURL = self.createAPIURL apiURL
-      page = HPSMTool::Settings::API_FIRST_PAGE
+      page = SSO::Constants::API_FIRST_PAGE
       response = nil
       result = []
       morePages = true
       while morePages
-        # TODO: check the number of FIRST HPSM api page
-        options.merge!({HPSMTool::Settings::API_KEY_PAGE => page, HPSMTool::Settings::API_KEY_PERPAGE => HPSMTool::Settings::API_VALUE_PERPAGE})
-        response = self.makeRequest restURL, options
+        options.merge!({:page => page, :per_page => SSO::Constants::API_PER_PAGE})
+        response = self.apiCall resource, :index,
         page += 1
-        if not HPSMTool::Utils::keyPresent? HPSMTool::Settings::API_KEY_PAGE
+        if not response['results'].length == req['per_page'].to_i
           morePages = false
         end
-        result.concat response[HPSMTool::Settings::API_KEY_RESULT]
+        result.concat response['results']
       end
       return result
     end
 
     def self.handleError(attempt, exception)
-      puts "Error during API call to HPSM\n#{exception.message}\n#{exception.response}"
-      if attempt >= HPSMTool::Settings::API_MAX_ATTEMPTS
-        HPSMTool::Utils::exitWithError "", HPSMTool::ToolError::API_GENERIC_ERROR
+      SSO::Utils::putsError "Error during API call to Satellite\n#{exception.message}\n#{exception.response}"
+      if attempt >= SSO::Constants::API_MAX_ATTEMPTS
+        SSO::Utils::exitWithError "FATAL ERROR: Something happened during an API call, see log", SSO::Constants::EXIT_API_GENERIC_ERROR
       end
       self.sleepAPI attempt
     end
 
     def sleepAPI(attempt)
-      if not HPSMTool::Settings::API_SLEEP
+      if not SSO::Constants::API_SLEEP
         return
       end
-      timeToSleep = HPSMTool::DefautlValue::API_SLEEP_TIME * ( HPSMTool::Settings::API_SLEEP_MULTIPLIER ** attempt )
+      timeToSleep = $options[SSO::Constants::API_SLEEP_TIME] * ( $options[SSO::Constants::API_SLEEP_MULTIPLIER] ** attempt )
       sleep timeToSleep
     end
-
   end
 end
