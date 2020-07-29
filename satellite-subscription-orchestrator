@@ -21,3 +21,34 @@ globalParser.order!
 command = SSOOptionParser::Parser::parse globalParser, ARGV
 puts "\n\nJust before start this are the Options:"
 pp $options
+
+### NEXT STEP ###
+# - subscription retrieveal and collecting
+# => read yaml file
+# => aggregate data
+#
+# - density check
+# => collecting hypervisor data
+# => mapping cluster / number of guests
+# => wrote all the csv data
+#
+# - search hosts
+# => build search options
+# => search for hosts
+
+# - subscribe hosts
+# => get hosts type
+# => retrieve hosts full data, in case of hypervisors also facts
+# => subscription flow
+# => report
+
+### SUBSCRIPTION FLOW ###
+# - Hypervisor
+# => check empty_hypervisor
+# => facts check
+# => subscribe hypervisor guests
+# - VM
+# => facts check
+# => check for vdc subs
+# - Physical
+# => facts check
