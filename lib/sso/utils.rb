@@ -41,5 +41,22 @@ module SSO
     def self.showVersion
       self.exitWith "#{SSO::Constants::PROGRAM_NAME} #{SSO::Constants::PROGRAM_VERSION}"
     end
+
+    def self.loadYAMLFileSection(file_path, section)
+      loaded_file = self.loadYAMLFile file_path
+      unless loaded_file.has_key? section
+        self.exitWithError "FATAL ERROR: Section #{section} not found in file #{file_path}", SSO::Constants::EXIT_CONFIGURATION_MISSING_SECTION
+      end
+      return loaded_file[section]
+    end
+
+    def self.loadYAMLFile(file_path)
+      begin
+        file_path = YAML.load_file file_path
+      rescue Errno::ENOENT
+        SSO::Utils::exitWithError "FATAL ERROR: Configuration file #{$options[:config_file]} not found! Exiting", SSO::Constants::EXIT_FILE_NOT_FOUND
+      end
+      return file
+    end
   end
 end

@@ -54,7 +54,7 @@ module SSOOptionParser
         SSO::Utils::exitWithError "FATAL ERROR: Configuration file #{parsed_options[:config_file]} not found! Exiting", SSO::Constants::EXIT_FILE_NOT_FOUND
       end
       if configuration_file.has_key? :settings
-        parsed_options = self.mergeOptions parsed_options
+        parsed_options = self.mergeOptions configuration_file[:settings]
       end
       return parsed_options
     end
