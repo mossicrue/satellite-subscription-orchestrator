@@ -62,7 +62,7 @@ module SSOOptionParser
     # TODO: Make test with both instance @ and class @@ version of parsed_options and default_options, implement dup in case of problem
     def self.mergeOptions(first_options, second_options)
       second_options.each do |key, val|
-        if not first_options.has_key? key
+        unless first_options.has_key? key
           first_options[kay] = val
         end
       end

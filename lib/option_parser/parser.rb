@@ -20,7 +20,7 @@ module SSOOptionParser
     end
 
     def self.buildCommand(oldCommand, newCommand)
-      if not oldCommand.size == 0
+      unless oldCommand.size == 0
         oldCommand.concat "_"
       end
       return oldCommand.concat newCommand

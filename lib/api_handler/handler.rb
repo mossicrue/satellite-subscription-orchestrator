@@ -33,7 +33,7 @@ module SSOAPI
         options.merge!({:page => page, :per_page => SSO::Constants::API_PER_PAGE})
         response = self.apiCall resource, :index,
         page += 1
-        if not response['results'].length == req['per_page'].to_i
+        unless response['results'].length == req['per_page'].to_i
           morePages = false
         end
         result.concat response['results']
@@ -50,7 +50,7 @@ module SSOAPI
     end
 
     def sleepAPI(attempt)
-      if not SSO::Constants::API_SLEEP
+      unless SSO::Constants::API_SLEEP
         return
       end
       timeToSleep = $options[SSO::Constants::API_SLEEP_TIME] * ( $options[SSO::Constants::API_SLEEP_MULTIPLIER] ** attempt )
