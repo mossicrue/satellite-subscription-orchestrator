@@ -1,24 +1,33 @@
 module SSOOptionParser
   class Parser
+    # parse all the subcommand and options typed in the command
     def self.parse(optionParser, passedArguments)
       command = ""
       $options = {}
+      # check if there isn't any passed arguments
       self.checkArguments optionParser, passedArguments
+      # iterate to build command and options
       while passedArguments.size > 0
+        # build command for SUBCOMMAND_TREE
         command = self.buildCommand command, passedArguments.shift
+        # build the option parser of the current command
         subOptionParser = SSOOptionParser::Builder::initializeParser command
+        # parse the options
         self.parseOptions subOptionParser
+        # return the options founded
         $options = SSOOptionParser::Binding::getParsedOptions
       end
       return command
     end
 
+    # if passed arguments are none, print help
     def self.checkArguments(optionParser, passedArguments)
       if passedArguments.size == 0
         self.printHelp optionParser
       end
     end
 
+    # build command by putting a "_" for SUBCOMMAND_TREE
     def self.buildCommand(oldCommand, newCommand)
       unless oldCommand.size == 0
         oldCommand.concat "_"
@@ -26,6 +35,7 @@ module SSOOptionParser
       return oldCommand.concat newCommand
     end
 
+    # parse the options typed with the command
     def self.parseOptions(optionParser)
       begin
         optionParser.order!
@@ -34,6 +44,7 @@ module SSOOptionParser
       end
     end
 
+    # print the help message
     def self.printHelp(optionParser)
       SSO::Utils::exitWith optionParser.help
     end

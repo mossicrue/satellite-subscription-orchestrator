@@ -119,28 +119,33 @@ module SSOOptionParser
       end
     }
 
+    # return the optionparser of the given command
     def self.getOptionParser(command)
+      # if the command doesn't exists in the SUBCOMMAND_TREE exit
       unless SUBCOMMAND_TREE.has_key? command
         SSO::Utils::exitWithError "SUBCOMMAND #{command} not expected. Exiting", SSO::Constants::EXIT_INVALID_SUBCOMMAND
       end
       return SUBCOMMAND_TREE[command]
     end
 
+    # return all the parsed options
     def self.getParsedOptions()
       if self.checkOptionsIntegrity
         return SSOOptionParser::Defaults::refineOptions @@parsed_options
       end
     end
 
+    # check the presence of incogruence options with a chain of rules
     def self.checkOptionsIntegrity
-      # list all the incogruence of options
-      # - empty hypervisor can't work with density
+      # --empty-hypervisor option can't work with --density options
       if @@parsed_options[:empty_hypervisor] and @@parsed_options[:density]
         SSO::Utils::exitWithError "FATAL ERROR: both --empty_hypervisor and --density options enabled. Use only one or see the script's usage.", SSO::Constants::EXIT_INCONGRUENT_OPTIONS
       end
+      # satellite connection url must be https
       unless @@parsed_options[:url].start_with?('https://')
         SSO::Utils::exitWithError "FATAL ERROR: URL to Satellite must start with https.", SSO::Constants::EXIT_INCONGRUENT_OPTIONS
       end
+      # if parsed_options are all good return true
       return true
     end
   end

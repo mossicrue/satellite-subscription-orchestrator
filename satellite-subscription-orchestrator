@@ -18,9 +18,12 @@ require_relative 'lib/subscriptions'
 # force the output to be sent to stdout in a sync way
 $stdout.sync = true
 $options = {}
+# build the options parser of the command
 globalParser = SSOOptionParser::Builder::initializeGlobalParser
 globalParser.order!
-command = SSOOptionParser::Parser::parse globalParser, ARGV
+# parsing the options passed
+#command = SSOOptionParser::Parser::parse globalParser, ARGV
+SSOOptionParser::Parser::parse globalParser, ARGV
 puts "\n\nJust before start this are the Options:"
 pp $options
 
