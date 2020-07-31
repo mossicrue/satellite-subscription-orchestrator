@@ -14,19 +14,24 @@ module SSO
       self.exitWith "[WIP] #{string} is not implemented yet"
     end
 
+    def self.putsStandard(string)
+      # for multithread output option
+      puts "#{string}"
+    end
+
     def self.putsError(string)
-      STDERR.puts "FATAL ERROR: #{string}"
+      STDERR.puts "#{string}"
     end
 
     def self.putsVerbose(string)
       if self.verbose?
-        puts "VERBOSE: #{string}"
+        self.putsStandard "VERBOSE: #{string}"
       end
     end
 
     def self.putsDebug(string)
       if self.debug?
-        puts "  DEBUG: #{string}"
+        self.putsStandard "  DEBUG: #{string}"
       end
     end
 
