@@ -11,7 +11,7 @@ module SSOAPI
     def self.apiCall(resource, action, params, exiting = false)
       # params.merge!({:organization_id => @options[:org], :page => page, :per_page => 100})
       # merge organization_id parameter with the one passed in the options
-      params.merge! {:organization_id => $options[SSO::Constants::SATELLITE_ORGANIZATION]}
+      params.merge!({:organization_id => $options[SSO::Constants::SATELLITE_ORGANIZATION]})
       puts "Calling APIPIE resource: #{resource}, action: #{action} with params #{params}"
       return 0
       attempt = 0

@@ -10,7 +10,7 @@ require 'csv'
 require 'pp'
 
 require_relative 'lib/sso'
-require_relarive 'lib/cache'
+require_relative 'lib/cache'
 require_relative 'lib/api_handler'
 require_relative 'lib/option_parser'
 require_relative 'lib/subscriptions'

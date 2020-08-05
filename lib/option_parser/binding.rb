@@ -5,7 +5,7 @@ module SSOOptionParser
     SUBCOMMAND_TREE = {
       # global settings, I mean, first help when you type ./SSO --help
       SSO::Constants::CMD_GLOBAL => OptionParser.new do |opts|
-        opts.banner = "Usage: #{opts.program_name} [options]"
+        opts.banner = "Satellite Subscription Orchestrator: a powerful tool for subscribing Satellite servers without any pain\n\nUSAGE:\n#{opts.program_name} [options]\n\nOPTIONS:"
         opts.version = SSO::Constants::PROGRAM_VERSION
         # connection options
         opts.on("-U", "--url=URL", "URL to the Satellite") do |url|
@@ -116,6 +116,7 @@ module SSOOptionParser
         opts.on("-n", "--noop", "Do not actually attach or remove any subscriptions") do
           @@parsed_options[:noop] = true
         end
+        opts.separator("\n")
       end
     }
 
