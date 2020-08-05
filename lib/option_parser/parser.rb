@@ -7,22 +7,23 @@ module SSOOptionParser
       # check if there isn't any passed arguments
       self.checkArguments optionParser, passedArguments
       # iterate to build command and options
-      while passedArguments.size > 0
+      ###while passedArguments.size > 0
         # build command for SUBCOMMAND_TREE
-        command = self.buildCommand command, passedArguments.shift
+        ###command = self.buildCommand command, passedArguments.shift
         # build the option parser of the current command
-        subOptionParser = SSOOptionParser::Builder::initializeParser command
+        ###subOptionParser = SSOOptionParser::Builder::initializeParser command
         # parse the options
-        self.parseOptions subOptionParser
+      self.parseOptions optionParser
         # return the options founded
-        $options = SSOOptionParser::Binding::getParsedOptions
-      end
-      return command
+      $options = SSOOptionParser::Binding::getParsedOptions
+    ###  end
+    ###  return command
     end
 
     # if passed arguments are none, print help
     def self.checkArguments(optionParser, passedArguments)
       if passedArguments.size == 0
+        SSO::Utils::putsStandard "WARNING: No options passed, see usage\n\n"
         self.printHelp optionParser
       end
     end

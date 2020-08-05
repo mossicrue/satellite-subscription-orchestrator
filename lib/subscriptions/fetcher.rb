@@ -1,7 +1,7 @@
 module SSOSubscriptions
   class Fetcher
 
-    @@parsed_subscriptions = []
+    @parsed_subscriptions = []
 
     # main function to be called for parse all the subscriptions to be searched
     def self.parseSubscriptions
@@ -9,7 +9,7 @@ module SSOSubscriptions
       # check if cache enable and subs present
       self.checkCache
       # if cache is empty search them from Satellite
-      unless @@parsed_subscriptions.count > 0
+      unless @parsed_subscriptions.count > 0
         self.readAllRules
       end
       SSO::Utils::putsStandard "Subscription successfully parsed"
@@ -18,10 +18,10 @@ module SSOSubscriptions
     # function that check if cache is present and has :subs
     def self.checkCache
       unless $options[:use_cache]
-        @@parsed_subscriptions = []
+        @parsed_subscriptions = []
       end
       SSO::Utils::putsStandard "  Subscriptions parsed from cache"
-      @@parsed_subscriptions = SSOCache::Importer::readFromCache :subs
+      @parsed_subscriptions = SSOCache::Importer::readFromCache :subs
     end
 
     # function that read all subscriptions rules present in :subs
