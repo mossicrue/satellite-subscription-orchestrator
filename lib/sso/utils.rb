@@ -49,8 +49,11 @@ module SSO
     end
 
     # function that move the space for handle output like verbose, debug or concurrency one
+    # return 2 strings: 1st with the leading space, 2nd with the string without spaces
     def self.moveSpace(string)
+      # create the string with all the leading spaces
       spaces = string[/\A */]
+      # create the stribg by stripping leadins spaces
       clean_string = string.strip
       return spaces, clean_string
     end
@@ -72,12 +75,15 @@ module SSO
 
     # function that load and parse a yaml file
     def self.loadYAMLFile(file_path, exit_on_error = true)
+      # try to load a file
       begin
         loaded_file = YAML.load_file file_path
+      # rescue the file not found
       rescue Errno::ENOENT
         if exit_on_error
           SSO::Utils::exitWithError "FATAL ERROR: File #{file_path} not found! Exiting", SSO::Constants::EXIT_FILE_NOT_FOUND
         else
+          # may not exit with error in case of cache file
           SSO::Utils::putsError "WARNING: File #{file_path} not found!"
           return
         end

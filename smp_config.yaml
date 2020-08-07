@@ -15,3 +15,9 @@
         rhel:
           - name: Red Hat Enterprise Linux Server, Standard (Physical or Virtual Nodes)
           - name: Smart Management
+    -
+      hostname: empty_sub_entry
+    -
+      hostname: invalid_sub_entry
+      sub:
+        - "Hello World!"

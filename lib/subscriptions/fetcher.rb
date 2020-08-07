@@ -49,7 +49,7 @@ module SSOSubscriptions
         SSO::Utils::putsStandard "    Searching subscription for product #{product}"
         desired_product_sub.each do |subscription_item|
           SSO::Utils::putsVerbose "      Parsing Subscription for '#{subscription_item}'"
-          # TODO: create string to be searched from subscription_item and call apipie to fetch all results
+          # create the search options string to pass on api call function
           search_options = SSO::Utils::createSearch subscription_item
           puts "Search options after processing: #{search_options}"
         end
@@ -63,12 +63,15 @@ module SSOSubscriptions
         SSO::Utils::putsStandard "    Subscription entry has not valid data, or is empty. Skipping."
         return true
       end
-      # if no, check if the desired subscription present in a subscription entry are invalid
-      if sub_entry.has_key? 'sub'
-        unless sub_entry['sub'].is_a? Hash
-          SSO::Utils::putsStandard "      Subscription entry has not valid subscription data, or is empty. Skipping."
-          return true
-        end
+      # check if the desired subscription present in a subscription entry has sub to be parsed
+      unless sub_entry.has_key? 'sub'
+        SSO::Utils::putsStandard "    No subscriptions data in current Subscription entry. Skipping."
+        return true
+      end
+      # check if subscriptions to be parsed are in valid format
+      unless sub_entry['sub'].is_a? Hash
+        SSO::Utils::putsStandard "    Current Subscription entry has not valid subscription data. Skipping."
+        return true
       end
       # in case of valid entry return false
       return false
