@@ -1,3 +1,17 @@
 ---
   :settings:
     :url: https://satellite.example.org
+  :subs:
+    -
+      hostname: .*
+      type: Hypervisor
+      sub:
+        rhel:
+          - name: Red Hat Enterprise Linux for Virtual Datacenters, Premium
+    -
+      hostname: .*
+      type: Physical
+      sub:
+        rhel:
+          - name: Red Hat Enterprise Linux Server, Standard (Physical or Virtual Nodes)
+          - name: Smart Management

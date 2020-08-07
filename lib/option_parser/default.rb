@@ -33,7 +33,7 @@ module SSOOptionParser
       :concurrency               => false,
       :concurrency_max_thread    => 2,
       :use_cache                 => false,
-      :cache_file                => 'sas.cache',
+      :cache_file                => 'sso.cache',
       :verbose                   => false,
       :debug                     => false,
       :noop                      => false

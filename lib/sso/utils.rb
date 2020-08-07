@@ -20,27 +20,39 @@ module SSO
 
     # function to use for write in standard output, multi-thread compatible
     def self.putsStandard(string)
-      # for multithread output option
-      puts "#{string}"
+      # use the moveSpace function also for multithread output option
+      spaces, clean_string = self.moveSpace string
+      puts "#{spaces}#{clean_string}"
     end
 
     # function to use for write in standard error, multi-thread compatible
     def self.putsError(string)
-      STDERR.puts "#{string}"
+      # use the moveSpace function also for multithread output option
+      spaces, clean_string = self.moveSpace string
+      STDERR.puts "#{spaces}#{clean_string}"
     end
 
     # function to use for write output in verbose mode
     def self.putsVerbose(string)
       if self.verbose?
-        self.putsStandard "VERBOSE: #{string}"
+        spaces, clean_string = self.moveSpace string
+        self.putsStandard "#{spaces}VERBOSE: #{clean_string}"
       end
     end
 
     # function to use for write output in debug mode
     def self.putsDebug(string)
       if self.debug?
-        self.putsStandard "  DEBUG: #{string}"
+        spaces, clean_string = self.moveSpace string
+        self.putsStandard "#{spaces}DEBUG: #{clean_string}"
       end
+    end
+
+    # function that move the space for handle output like verbose, debug or concurrency one
+    def self.moveSpace(string)
+      spaces = string[/\A */]
+      clean_string = string.strip
+      return spaces, clean_string
     end
 
     # function that return the state of verbose option
@@ -59,18 +71,23 @@ module SSO
     end
 
     # function that load and parse a yaml file
-    def self.loadYAMLFile(file_path)
+    def self.loadYAMLFile(file_path, exit_on_error = true)
       begin
-        file_path = YAML.load_file file_path
+        loaded_file = YAML.load_file file_path
       rescue Errno::ENOENT
-        SSO::Utils::exitWithError "FATAL ERROR: Configuration file #{$options[:config_file]} not found! Exiting", SSO::Constants::EXIT_FILE_NOT_FOUND
+        if exit_on_error
+          SSO::Utils::exitWithError "FATAL ERROR: File #{file_path} not found! Exiting", SSO::Constants::EXIT_FILE_NOT_FOUND
+        else
+          SSO::Utils::putsError "WARNING: File #{file_path} not found!"
+          return
+        end
       end
-      return file
+      return loaded_file
     end
 
     # function that return a section of a yaml file
-    def self.loadYAMLFileSection(file_path, section)
-      loaded_file = self.loadYAMLFile file_path
+    def self.loadYAMLFileSection(file_path, section, exit_on_error = true)
+      loaded_file = self.loadYAMLFile file_path, exit_on_error
       unless loaded_file.has_key? section
         self.exitWithError "FATAL ERROR: Section #{section} not found in file #{file_path}", SSO::Constants::EXIT_CONFIGURATION_MISSING_SECTION
       end
@@ -78,19 +95,19 @@ module SSO
     end
 
     # function used for build search string for subscriptions
-    def self.search_args(search)
+    def self.createSearch(search)
       # if string to search is a string return it without doing anything
       if search.is_a? String
         return "\"#{search}\""
       # if it's a hash trasform it in array and recall the function
       elsif search.is_a? Hash
         args = search.collect do |key, value|
-          "#{key}=#{self.search_args value}"
+          "#{key}=#{self.createSearch value}"
         end
-        self.search_args args
+        self.createSearch args
       # if it's an array map all the elements joining them with an 'and'
       elsif search.is_a? Array
-        search.compact.map { |item| item.is_a?(Hash) ? self.search_args(item) : item }.join(' and ')
+        search.compact.map { |item| item.is_a?(Hash) ? self.createSearch(item) : item }.join(' and ')
       else
         return search
       end
