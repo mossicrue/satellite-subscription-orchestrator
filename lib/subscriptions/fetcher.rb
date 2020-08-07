@@ -32,6 +32,7 @@ module SSOSubscriptions
       sub_entries = subscription_entries.count
       # iterate all the subscription entries to parse it
       subscription_entries.each_with_index do |sub_entry, entry_index|
+        SSO::Utils::putsNewLine
         SSO::Utils::putsStandard "  Start parsing subscription entry #{entry_index + 1}/#{sub_entries}"
         # parse a single sub entry
         self.parseSubEntry sub_entry
@@ -51,7 +52,11 @@ module SSOSubscriptions
           SSO::Utils::putsVerbose "      Parsing Subscription for '#{subscription_item}'"
           # create the search options string to pass on api call function
           search_options = SSO::Utils::createSearch subscription_item
-          puts "Search options after processing: #{search_options}"
+          # fetch all the subscriptions available for the hosts
+          parse_result = SSOAPI::Handler::fetchAllResults(:subscriptions, :index, {:search => search_options, :available_for => "host"})
+          if parse_result.empty?
+            SSO::Utils::putsVerbose "        Parsing results for '#{subscription_item}' is empty, not adding subscription"
+          end
         end
       end
     end

@@ -9,11 +9,8 @@ module SSOAPI
 
     # function that make the api call to satellite server
     def self.apiCall(resource, action, params, exiting = false)
-      # params.merge!({:organization_id => @options[:org], :page => page, :per_page => 100})
       # merge organization_id parameter with the one passed in the options
       params.merge!({:organization_id => $options[SSO::Constants::SATELLITE_ORGANIZATION]})
-      puts "Calling APIPIE resource: #{resource}, action: #{action} with params #{params}"
-      return 0
       attempt = 0
       # try to make the api call
       while attempt <= $options[SSO::Constants::API_MAX_STEP]
@@ -23,27 +20,29 @@ module SSOAPI
           # if the api call fails check the error and raise the number of attempt maded
           self.handleError attempt, exception
           attempt += 1
+        rescue StandardError => exception
+          self.handleError $options[SSO::Constants::API_MAX_STEP], exception
+          ### SSO::Utils::exitWithError "FATAL ERROR: A non RestClient error occured during apicall!\nCheck configuration file and option passed, can this host reach satellite server #{$options[:url]}?\n\nError Stack here:\n#{exception}"
         end
       end
       return response
     end
 
     # function that retrieve all data from paginated api like :index action of the api resources
-    def self.fetchAllResults(resource, action, params)
-      restURL = self.createAPIURL apiURL
+    def self.fetchAllResults(resource, action, params, exiting = false)
       page = SSO::Constants::API_FIRST_PAGE
       response = nil
       result = []
       morePages = true
       # start to iterate the api calls
       while morePages
-        # merge options with the page and per_page value
-        options.merge!({:page => page, :per_page => SSO::Constants::API_PER_PAGE})
+        # merge params with the page and per_page value
+        params.merge!({:page => page, :per_page => SSO::Constants::API_PER_PAGE})
         # call api
-        response = self.apiCall resource, :index,
+        response = self.apiCall resource, :index, params, exiting
         page += 1
         # if response of api has results equals aren't equals to per_page value stop parsing
-        unless response['results'].length == req['per_page'].to_i
+        unless response['results'].length == response['per_page'].to_i
           morePages = false
         end
         # concat the current response with the previous found
@@ -56,7 +55,7 @@ module SSOAPI
     def self.handleError(attempt, exception)
       SSO::Utils::putsError "Error during API call to Satellite\n#{exception.message}\n#{exception.response}"
       # if attempt is >= of max attempts exit with error
-      if attempt >= SSO::Constants::API_MAX_ATTEMPTS
+      if attempt >= $options[SSO::Constants::API_MAX_STEP]
         SSO::Utils::exitWithError "FATAL ERROR: Something happened during an API call, see log", SSO::Constants::EXIT_API_GENERIC_ERROR
       end
       # otherwise sleep and wait (maybe traffic error or lock of resource)

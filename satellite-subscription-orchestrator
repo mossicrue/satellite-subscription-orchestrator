@@ -25,6 +25,8 @@ SSOOptionParser::Parser::parse globalParser, ARGV
 puts "\n\nJust before start this are the Options:"
 pp $options
 
+SSOAPI::Handler::bindAPI
+
 SSOSubscriptions::Fetcher::parseSubscriptions
 ### NEXT STEP ###
 # - subscription retrieveal and collecting

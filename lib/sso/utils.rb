@@ -9,7 +9,7 @@ module SSO
 
     # function to use for exit with error code equals to 0
     def self.exitWith(string)
-      puts string
+      self.putsStandard string
       exit SSO::Constants::EXIT_ZERO
     end
 
@@ -30,6 +30,10 @@ module SSO
       # use the moveSpace function also for multithread output option
       spaces, clean_string = self.moveSpace string
       STDERR.puts "#{spaces}#{clean_string}"
+    end
+
+    def self.putsNewLine
+      self.putsStandard "\n"
     end
 
     # function to use for write output in verbose mode
